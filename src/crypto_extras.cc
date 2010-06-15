@@ -20,6 +20,8 @@ namespace node {
 
 using namespace v8;
 
+// hex_encode, hex_decode, base64, unbase64 nicked from node_crypto.cc
+
 void hex_encode(unsigned char *md_value, int md_len, char** md_hexdigest,
                 int* md_hex_len) {
   *md_hex_len = (2*(md_len));
