@@ -11,27 +11,11 @@ var plaintext = "The Plaintext";
 var rsaPublic = fs.readFileSync("rsa.public", 'ascii');
 var rsaPrivate = fs.readFileSync("rsa.private", 'ascii');
 
-// var params = {};
-// fs.readFile('rsa.public', 'ascii', function (err, data) {
-//     if (err) throw err;
-//     var rsaPublic = data;
-//     fs.readFile('rsa.private', 'ascii', function (err, data) {
-// 	if (err) throw err;
-// 	var rsaPrivate = data;
-// 	params = { publicKey: rsaPublic, privateKey: rsaPrivate, passphrase: "foobar" };
-//     });
-// });
-
 var params = { publicKey: rsaPublic, privateKey: rsaPrivate, passphrase: "foobar" };
-//sys.puts(sys.inspect(params));
-
 var keypair = crypto_extras.createRsaKeypair(params);
 
 // roundtrip via hex encoding
 var ciphertext = keypair.encrypt(plaintext, 'utf8', 'hex');
-
-//sys.puts(ciphertext);
-
 var plaintext_again = keypair.decrypt(ciphertext, 'hex', 'utf8');
 assert.equal(plaintext, plaintext_again);
 
