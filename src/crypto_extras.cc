@@ -53,7 +53,7 @@ void base64(unsigned char *input, int length, char** buf64, int* buf64_len)
   b64 = BIO_push(b64, bmem);
   BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
   BIO_write(b64, input, length);
-  BIO_flush(b64);
+  (void)BIO_flush(b64);
   BIO_get_mem_ptr(b64, &bptr);
 
   *buf64_len = bptr->length;
@@ -66,7 +66,7 @@ void base64(unsigned char *input, int length, char** buf64, int* buf64_len)
 
 }
 
-void *unbase64(unsigned char *input, int length, char** buffer, int* buffer_len)
+void unbase64(unsigned char *input, int length, char** buffer, int* buffer_len)
 {
   BIO *b64, *bmem;
   *buffer = (char *)malloc(length);
@@ -79,7 +79,6 @@ void *unbase64(unsigned char *input, int length, char** buffer, int* buffer_len)
 
   *buffer_len = BIO_read(bmem, *buffer, length);
   BIO_free_all(bmem);
-
 }
 
 
@@ -268,7 +267,7 @@ Handle<Value> RsaKeypair::Decrypt(const Arguments& args) {
 
   ssize_t len = DecodeBytes(args[0], BINARY);
   unsigned char* buf = new unsigned char[len];
-  ssize_t written = DecodeWrite((char *)buf, len, args[0], BINARY);
+  (void)DecodeWrite((char *)buf, len, args[0], BINARY);
   unsigned char* ciphertext;
   int ciphertext_len;
 
@@ -350,7 +349,6 @@ Handle<Value> Random::New(const Arguments& args) {
 
 Handle<Value> Random::RandomBytes(const Arguments& args) {
   HandleScope scope;
-  Random *r = ObjectWrap::Unwrap<Random>(args.Holder());
 
   if (!args[0]->IsNumber()) {
     return ThrowException(Exception::TypeError(
