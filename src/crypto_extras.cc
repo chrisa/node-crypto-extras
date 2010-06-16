@@ -187,8 +187,7 @@ Handle<Value> RsaKeypair::Encrypt(const Arguments& args) {
   RsaKeypair *kp = ObjectWrap::Unwrap<RsaKeypair>(args.Holder());
 
   if (kp->publicKey == NULL) {
-    // XXX appropriate exception
-    Local<Value> exception = Exception::TypeError(String::New("Can't encrypt, no public key"));
+    Local<Value> exception = Exception::Error(String::New("Can't encrypt, no public key"));
     return ThrowException(exception);
   }
 
@@ -216,9 +215,9 @@ Handle<Value> RsaKeypair::Encrypt(const Arguments& args) {
   int r = RSA_public_encrypt(len, buf, out, kp->publicKey, RSA_PKCS1_OAEP_PADDING);
 
   if (r < 0) {
-    // XXX ERR_error_string
-    // XXX appropriate exception
-    Local<Value> exception = Exception::TypeError(String::New("error encrypting"));
+    char *err = ERR_error_string(ERR_get_error(), NULL);
+    Local<String> full_err = String::Concat(String::New("RSA encrypt: "), String::New(err));
+    Local<Value> exception = Exception::Error(full_err);
     return ThrowException(exception);
   }
 
@@ -245,8 +244,9 @@ Handle<Value> RsaKeypair::Encrypt(const Arguments& args) {
         outString = Encode(out, out_len, BINARY);
       } else {
 	outString = String::New("");
-	fprintf(stderr, "node-crypto : RsaKeypair.encrypt encoding "
-		"can be binary, base64 or hex\n");
+	Local<Value> exception = Exception::Error(String::New("RsaKeypair.encrypt encoding "
+							      "can be binary, base64 or hex"));
+	return ThrowException(exception);
       }
     }
   }
@@ -260,8 +260,7 @@ Handle<Value> RsaKeypair::Decrypt(const Arguments& args) {
   RsaKeypair *kp = ObjectWrap::Unwrap<RsaKeypair>(args.Holder());
 
   if (kp->privateKey == NULL) {
-    // XXX appropriate exception
-    Local<Value> exception = Exception::TypeError(String::New("Can't decrypt, no private key"));
+    Local<Value> exception = Exception::Error(String::New("Can't decrypt, no private key"));
     return ThrowException(exception);
   }
 
@@ -288,15 +287,16 @@ Handle<Value> RsaKeypair::Decrypt(const Arguments& args) {
     } else if (strcasecmp(*encoding, "binary") == 0) {
       // Binary - do nothing
     } else {
-      fprintf(stderr, "node-crypto : RsaKeypair.decrypt encoding "
-	      "can be binary, base64 or hex\n");
+      Local<Value> exception = Exception::Error(String::New("RsaKeypair.decrypt encoding "
+							    "can be binary, base64 or hex"));
+      return ThrowException(exception);
     }
   }
 
   // XXX is this check unnecessary? is it just len <= keysize?
   // check per RSA_public_encrypt(3) when using OAEP
   //if (len > RSA_size(kp->privateKey) - 41) {
-  //  Local<Value> exception = Exception::TypeError(String::New("Bad argument (too long for key size)"));
+  //  Local<Value> exception = Exception::Error(String::New("Bad argument (too long for key size)"));
   //  return ThrowException(exception);
   //}
   
@@ -306,9 +306,9 @@ Handle<Value> RsaKeypair::Decrypt(const Arguments& args) {
   out_len = RSA_private_decrypt(len, buf, out, kp->privateKey, RSA_PKCS1_OAEP_PADDING);
 
   if (out_len < 0) {
-    // XXX ERR_error_string
-    // XXX appropriate exception
-    Local<Value> exception = Exception::TypeError(String::New("error decrypting"));
+    char *err = ERR_error_string(ERR_get_error(), NULL);
+    Local<String> full_err = String::Concat(String::New("RSA decrypt: "), String::New(err));
+    Local<Value> exception = Exception::Error(full_err);
     return ThrowException(exception);
   }
   
@@ -359,10 +359,10 @@ Handle<Value> Random::RandomBytes(const Arguments& args) {
   unsigned char *out = (unsigned char*)malloc(out_len);
 
   if (RAND_bytes(out, out_len) == 0) {
-    // XXX appropriate exception
-    // ERR_get_error
-    return ThrowException(Exception::TypeError(
-          String::New("error getting random bytes")));
+    char *err = ERR_error_string(ERR_get_error(), NULL);
+    Local<String> full_err = String::Concat(String::New("randomBytes: "), String::New(err));
+    Local<Value> exception = Exception::Error(full_err);
+    return ThrowException(exception);
   }
 
   Local<Value> outString;
@@ -384,8 +384,9 @@ Handle<Value> Random::RandomBytes(const Arguments& args) {
         outString = Encode(out, out_len, BINARY);
       } else {
 	outString = String::New("");
-	fprintf(stderr, "node-crypto : randomBytes encoding "
-		"can be binary or hex\n");
+	Local<Value> exception = Exception::Error(String::New("randomBytes encoding can "
+							      "be binary or hex"));
+	return ThrowException(exception);
       }
     }
   }
