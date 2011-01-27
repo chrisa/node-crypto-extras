@@ -1,0 +1,11 @@
+{
+  "name" : "crypto-extras",
+  "version" : "v0.0.1",
+  "description" : "Additional OpenSSL bindings - RSA and RNG",
+  "keywords" : ["openssl", "crypto", "rng", "rsa"],
+  "homepage" : "https://github.com/chrisa/node-crypto-extras#readme",
+  "author" : { "name" : "Chris Andrews", "email": "chris@nodnol.org" },
+  "files" : [ "LICENCE", "README.md", "Makefile", "lib", "src", "test", "rsa.public", "rsa.private" ],
+  "main" : "./lib/crypto-extras.js",
+  "repository" : { "type" : "git", "url" : "http://github.com/chrisa/node-crypto-extras.git" }
+}
