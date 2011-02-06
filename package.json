@@ -7,5 +7,6 @@
   "author" : { "name" : "Chris Andrews", "email": "chris@nodnol.org" },
   "files" : [ "LICENCE", "README.md", "Makefile", "lib", "src", "test", "rsa.public", "rsa.private" ],
   "main" : "./lib/crypto-extras.js",
-  "repository" : { "type" : "git", "url" : "http://github.com/chrisa/node-crypto-extras.git" }
+  "repository" : { "type" : "git", "url" : "http://github.com/chrisa/node-crypto-extras.git" },
+  "scripts": { "install": "cd src && node-waf configure build" }
 }
