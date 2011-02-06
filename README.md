@@ -1,3 +1,9 @@
+# THIS MODULE IS OBSOLETE
+
+For RSA - https://github.com/chrisa/node-rsa ("rsa" in npm).
+For Random - https://github.com/akdubya/rbytes - ("rbytes" in npm).
+
+
 `node-crypto-extras`
 
 This module provides access to extra crypto routines from OpenSSL:
